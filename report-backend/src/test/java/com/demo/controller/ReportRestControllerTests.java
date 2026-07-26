@@ -35,8 +35,8 @@ class ReportControllerTest {
     @BeforeEach
     void setup() {
 
-        ReportController controller =
-                new ReportController(accountTransactionService);
+        ReportRestController controller =
+                new ReportRestController(accountTransactionService);
 
 
         mockMvc = MockMvcBuilders

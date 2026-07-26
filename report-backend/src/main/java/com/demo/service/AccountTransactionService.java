@@ -1,10 +1,12 @@
 package com.demo.service;
 
+import com.demo.dto.TransactionReportDto;
 import com.demo.entity.AccountTransactionEntity;
 import com.demo.repository.AccountTransactionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountTransactionService {
@@ -19,4 +21,6 @@ public class AccountTransactionService {
         return accountTransactionRepository.findAll();
 
     }
+
+
 }
