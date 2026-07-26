@@ -19,4 +19,6 @@ public class AccountTransactionRepository {
                         AccountTransactionEntity.class).getResultList();
 
     }
+
+
 }
