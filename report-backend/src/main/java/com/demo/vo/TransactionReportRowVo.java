@@ -21,7 +21,7 @@ public class TransactionReportRowVo {
 
     private String gameTranId;
 
-    private Long gameId;
+    private String gameId;
 
 
     private BigDecimal amount;

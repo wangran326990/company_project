@@ -63,5 +63,10 @@ public class ReportService {
                 .toList();
     }
 
-
+    public List<TransactionReportDto> getExcelData(TransactionSearchRequestDto searchRequest) {
+        return accountTransactionRepository.findRangeByAccountId(
+                searchRequest.getStartDate(),
+                searchRequest.getEndDate(),
+                searchRequest.getAccountId()).stream().map(TransactionReportMapper::toDto).collect(Collectors.toList());
+    }
 }

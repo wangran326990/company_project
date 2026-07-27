@@ -58,6 +58,24 @@ public class AccountTransactionRepository {
 
     }
 
+    public List<AccountTransactionEntity> findRangeByAccountId(LocalDateTime startDate, LocalDateTime endDate, Integer accountId) {
+        StringBuilder jpql = new StringBuilder(
+                "SELECT ate FROM AccountTransactionEntity ate " +
+                        "WHERE ate.dateTime BETWEEN :startDate AND :endDate"
+        );
+
+        if (accountId != null) {
+            jpql.append(" AND ate.accountId = :accountId");
+        }
+        TypedQuery<AccountTransactionEntity> query = entityManager.createQuery(jpql.toString(), AccountTransactionEntity.class);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
+        if(accountId != null) {
+            query.setParameter("accountId", accountId);
+        }
+        return query.getResultList();
+    }
+
 
 
     public List<TransactionReportDto> search(TransactionSearchRequestDto request) {

@@ -507,7 +507,9 @@
         Search
     </button>
 
-
+    <button id="downloadBtn">
+        Download CSV
+    </button>
 
     <br>
     <br>

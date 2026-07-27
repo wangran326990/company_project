@@ -14,7 +14,7 @@ public class TransactionReportMapper {
                 .tranType(entity.getTranType())
                 .platformTranId(entity.getPlatformTranId())
                 .amount(entity.getAmountSum())
-                .gameId(entity.getId())
+                .gameId(entity.getGameId())
                 .gameTranId(entity.getGameTranId())
                 .balance(entity.getBalanceSum()).build();
     }
@@ -28,9 +28,23 @@ public class TransactionReportMapper {
                 .tranType(dto.getTranType())
                 .platformTranId(dto.getPlatformTranId())
                 .amount(dto.getAmount())
-                .gameId(dto.getId())
+                .gameId(dto.getGameId())
                 .gameTranId(dto.getGameTranId())
                 .balance(dto.getBalance()).build();
+    }
+
+    public static TransactionReportDto toDto(AccountTransactionEntity entity) {
+
+        return TransactionReportDto.builder()
+                .id(entity.getId())
+                .accountId(entity.getAccountId())
+                .dateTime(entity.getDateTime())
+                .tranType(entity.getTranType())
+                .platformTranId(entity.getPlatformTranId())
+                .amount(entity.getAmountSum())
+                .gameId(entity.getGameId())
+                .gameTranId(entity.getGameTranId())
+                .balance(entity.getBalanceSum()).build();
     }
 
 }

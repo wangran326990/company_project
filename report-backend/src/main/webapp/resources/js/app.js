@@ -57,6 +57,18 @@ $(function () {
         e.preventDefault();
         loadSummary();
     });
+
+    $("#downloadBtn").click(function (e) {
+        e.preventDefault();
+        const params = $.param({
+            accountId: $accountId.val(),
+            startDate: $startDatebox.prop("defaultValue"),
+            endDate: $endDatebox.prop("defaultValue")
+        });
+
+        window.location = "/api/v1/report/export?" + params;
+    });
+
     function sort(column) {
         console.log("click on " + column);
         $sortBy.val(column);

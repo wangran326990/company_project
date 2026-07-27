@@ -64,7 +64,7 @@ class ReportControllerTest {
 
 
         mockMvc.perform(
-                        get("/transaction/list")
+                        get("/api/v1/report/list")
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
