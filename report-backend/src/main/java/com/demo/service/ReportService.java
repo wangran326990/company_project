@@ -3,13 +3,16 @@ package com.demo.service;
 import com.demo.dto.TransactionReportDto;
 import com.demo.dto.TransactionSearchRequestDto;
 import com.demo.entity.AccountTransactionEntity;
+import com.demo.mapper.ReportSummaryMapper;
 import com.demo.mapper.TransactionReportMapper;
 import com.demo.repository.AccountTransactionRepository;
 import com.demo.vo.PaginationResponseVo;
+import com.demo.vo.ReportSummaryVo;
 import com.demo.vo.TransactionReportRowVo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportService {
@@ -51,6 +54,14 @@ public class ReportService {
                 .build();
     }
 
+
+    public List<ReportSummaryVo> getReportSummary(TransactionSearchRequestDto searchRequest) {
+        return accountTransactionRepository
+                .getReportSummary(searchRequest)
+                .stream()
+                .map(ReportSummaryMapper::toVo)
+                .toList();
+    }
 
 
 }

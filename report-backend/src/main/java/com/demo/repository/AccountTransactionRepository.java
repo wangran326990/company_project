@@ -1,5 +1,6 @@
 package com.demo.repository;
 
+import com.demo.dto.ReportSummaryDto;
 import com.demo.dto.TransactionReportDto;
 import com.demo.dto.TransactionSearchRequestDto;
 import com.demo.entity.AccountTransactionEntity;
@@ -247,5 +248,74 @@ public class AccountTransactionRepository {
 
         return ((Number) query.getSingleResult())
                 .longValue();
+    }
+
+
+    public List<ReportSummaryDto> getReportSummary(TransactionSearchRequestDto request) {
+        StringBuilder jpql = new StringBuilder("""
+        SELECT new com.demo.dto.ReportSummaryDto(
+            a.accountId,
+            SUM(CASE WHEN a.tranType = 'GAME_BET' THEN a.amountReal ELSE 0 END) AS betSum,
+            SUM(CASE WHEN a.tranType = 'GAME_WIN' THEN a.amountReal ELSE 0 END) AS winSum,
+            SUM(CASE WHEN a.tranType = 'GAME_WIN' THEN a.amountReal ELSE 0 END)
+            +
+            SUM(CASE WHEN a.tranType = 'GAME_BET' THEN a.amountReal ELSE 0 END) AS net
+        )
+        FROM AccountTransactionEntity a
+        WHERE a.tranType IN ('GAME_BET', 'GAME_WIN')
+        """);
+
+        Map<String, Object> params = new HashMap<>();
+        if(request.getAccountId() != null) {
+            jpql.append(" AND a.accountId = :accountId ");
+            params.put("accountId", request.getAccountId());
+        }
+
+        if (request.getStartDate() != null) {
+            jpql.append(" AND a.dateTime >= :startDate ");
+            params.put("startDate", request.getStartDate());
+        }
+
+        if (request.getEndDate() != null) {
+            jpql.append(" AND a.dateTime <= :endDate ");
+            params.put("endDate", request.getEndDate());
+        }
+
+        if(request.getTranType() != null && !request.getTranType().isEmpty()){
+            jpql.append(" AND a.tranType = :tranType ");
+            params.put("tranType", request.getTranType());
+        }
+
+
+        if(request.getGameId() != null && !request.getGameId().isEmpty()){
+            jpql.append(" AND a.gameId = :gameId ");
+            params.put("gameId", request.getGameId());
+        }
+
+        if(request.getGameTranId() != null && !request.getGameTranId().isEmpty()){
+            jpql.append(" AND a.gameTranId = :gameTranId ");
+            params.put("gameTranId", request.getGameTranId());
+        }
+
+        if(request.getPlatformTranId() != null && !request.getPlatformTranId().isEmpty()){
+            jpql.append(" AND a.platformTranId = :platformTranId ");
+            params.put("platformTranId", request.getPlatformTranId());
+        }
+
+        jpql.append("""
+        GROUP BY a.accountId
+        """);
+
+        TypedQuery<ReportSummaryDto> query =
+                entityManager.createQuery(
+                        jpql.toString(),
+                        ReportSummaryDto.class
+                );
+
+
+        params.forEach(query::setParameter);
+
+
+        return query.getResultList();
     }
 }

@@ -125,7 +125,7 @@
 
             <td colspan="2">
 
-                <button type="submit">
+                <button method='submit' id="generateReportBtn">
                     Generate Report
                 </button>
 
@@ -372,6 +372,7 @@
             <td>
 
                 <form:input
+                        id="accountId"
                         path="accountId"
                         cssClass="filter-input"/>
 
@@ -502,7 +503,7 @@
     <br>
 
 
-    <button type="submit">
+    <button type="submit" id="searchBtn">
         Search
     </button>
 
@@ -544,7 +545,7 @@
             <input type="number"
                    id="gotoPage"
                    value="${transactions.currentPage}"
-                   min="1"
+                   min="${transactions.totalPages < 1 ? 0 : 1}"
                    max="${transactions.totalPages}"
                    style="width:60px;">
 
@@ -603,6 +604,23 @@
 </form:form>
 </c:if>
 
+<div id="summarySection">
+    <h3>Summary Session</h3>
+
+    <table id="summaryTable">
+        <thead>
+            <tr>
+                <th>Account ID</th>
+                <th>Bet Sum</th>
+                <th>Win Sum</th>
+                <th>Net</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
 
 </body>
 

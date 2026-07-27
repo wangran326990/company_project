@@ -2,6 +2,7 @@ package com.demo.controller;
 
 import com.demo.entity.AccountTransactionEntity;
 import com.demo.service.AccountTransactionService;
+import com.demo.service.ReportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -30,13 +31,15 @@ class ReportControllerTest {
 
     @Mock
     private AccountTransactionService accountTransactionService;
+    @Mock
+    private ReportService reportService;
 
 
     @BeforeEach
     void setup() {
 
         ReportRestController controller =
-                new ReportRestController(accountTransactionService);
+                new ReportRestController(accountTransactionService,reportService);
 
 
         mockMvc = MockMvcBuilders

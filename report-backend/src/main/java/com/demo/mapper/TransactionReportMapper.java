@@ -3,9 +3,7 @@ package com.demo.mapper;
 import com.demo.dto.TransactionReportDto;
 import com.demo.entity.AccountTransactionEntity;
 import com.demo.vo.TransactionReportRowVo;
-import org.springframework.stereotype.Component;
 
-@Component
 public class TransactionReportMapper {
     public static TransactionReportRowVo toVo(AccountTransactionEntity entity) {
 
