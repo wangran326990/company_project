@@ -1,6 +1,7 @@
 package com.demo.dto;
 
 import com.demo.validation.ValidDateRange;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -28,8 +29,8 @@ public class TransactionSearchRequestDto {
     private String sortBy = "";     // datetime, amount, balance
 
     private String sortDirection; // ASC, DESC
-
+    @Min(value = 1, message = "Page must be greater than or equal to 1")
     private int page = 1;
-
+    @Min(value = 0, message = "Page must be greater than or equal to 0")
     private int size = 50;
 }

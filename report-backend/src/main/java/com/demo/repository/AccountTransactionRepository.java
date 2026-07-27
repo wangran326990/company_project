@@ -92,40 +92,8 @@ public class AccountTransactionRepository {
             WHERE 1=1
         """);
 
-
-        Map<String,Object> params = new HashMap<>();
-
-
-        if(request.getAccountId() != null){
-            sql.append(" AND ACCOUNT_ID = :accountId ");
-            params.put("accountId", request.getAccountId());
-        }
-
-
-        if(request.getStartDate() != null){
-            sql.append(" AND DATETIME >= :startDate ");
-            params.put("startDate", request.getStartDate());
-        }
-
-
-        if(request.getEndDate() != null){
-            sql.append(" AND DATETIME <= :endDate ");
-            params.put("endDate", request.getEndDate());
-        }
-
-
-        if(request.getTranType() != null){
-            sql.append(" AND TRAN_TYPE = :tranType ");
-            params.put("tranType", request.getTranType());
-        }
-
-
-        if(request.getGameId() != null){
-            sql.append(" AND GAME_ID = :gameId ");
-            params.put("gameId", request.getGameId());
-        }
-
-
+        sql.append(getSearchQuery(request));
+        Map<String, Object> params = getSearchQueryParams(request);
         // dynamic sorting
         sql.append(buildOrderBy(request));
 
@@ -139,7 +107,7 @@ public class AccountTransactionRepository {
 
         // pagination
         query.setFirstResult(
-                request.getPage() * request.getSize()
+                (request.getPage() - 1) * request.getSize()
         );
 
         query.setMaxResults(
@@ -150,6 +118,85 @@ public class AccountTransactionRepository {
         return (List<TransactionReportDto>) query.getResultList();
     }
 
+    private static Map<String, Object> getSearchQueryParams(TransactionSearchRequestDto request) {
+        Map<String,Object> params = new HashMap<>();
+
+
+        if(request.getAccountId() != null){
+            params.put("accountId", request.getAccountId());
+        }
+
+
+        if(request.getStartDate() != null){
+            params.put("startDate", request.getStartDate());
+        }
+
+
+        if(request.getEndDate() != null){
+            params.put("endDate", request.getEndDate());
+        }
+
+
+        if(request.getTranType() != null && !request.getTranType().isEmpty()){
+            params.put("tranType", request.getTranType());
+        }
+
+
+        if(request.getGameId() != null && !request.getGameId().isEmpty()){
+            params.put("gameId", request.getGameId());
+        }
+
+        if(request.getGameTranId() != null && !request.getGameTranId().isEmpty()){
+            params.put("gameTranId", request.getGameTranId());
+        }
+
+        if(request.getPlatformTranId() != null && !request.getPlatformTranId().isEmpty()){
+            params.put("platformTranId", request.getPlatformTranId());
+        }
+        return params;
+    }
+
+    private String getSearchQuery(TransactionSearchRequestDto request) {
+        StringBuilder sql = new StringBuilder();
+        if(request.getAccountId() != null){
+            sql.append(" AND ACCOUNT_ID = :accountId ");
+
+        }
+
+
+        if(request.getStartDate() != null){
+            sql.append(" AND DATETIME >= :startDate ");
+
+        }
+
+
+        if(request.getEndDate() != null){
+            sql.append(" AND DATETIME <= :endDate ");
+
+        }
+
+
+        if(request.getTranType() != null && !request.getTranType().isEmpty()){
+            sql.append(" AND TRAN_TYPE = :tranType ");
+
+        }
+
+
+        if(request.getGameId() != null && !request.getGameId().isEmpty()){
+            sql.append(" AND GAME_ID = :gameId ");
+
+        }
+
+        if(request.getGameTranId() != null && !request.getGameTranId().isEmpty()){
+            sql.append(" AND GAME_TRAN_ID = :gameTranId ");
+        }
+
+        if(request.getPlatformTranId() != null && !request.getPlatformTranId().isEmpty()){
+            sql.append(" AND PLATFORM_TRAN_ID = :platformTranId ");
+        }
+        return sql.toString();
+    }
+
 
     private String buildOrderBy(TransactionSearchRequestDto request){
 
@@ -157,11 +204,11 @@ public class AccountTransactionRepository {
             case "amount" -> "amount";
             case "balance" -> "balance";
             case "tranType"-> "TRAN_TYPE";
-            case "PLATFORM_TRAN_ID"->"PLATFORM_TRAN_ID";
-            case "GAME_TRAN_ID"->"GAME_TRAN_ID";
-            case "ACCOUNT_ID"-> "ACCOUNT_ID";
-            case "ID"->"ID";
-            case "GAME_ID"->"GAME_ID";
+            case "platformTranId"->"PLATFORM_TRAN_ID";
+            case "gameTranId"->"GAME_TRAN_ID";
+            case "accountId"-> "ACCOUNT_ID";
+            case "id"->"ID";
+            case "gameId"->"GAME_ID";
             default -> "DATETIME";
         };
 
@@ -175,14 +222,30 @@ public class AccountTransactionRepository {
         return " ORDER BY " + sortColumn + " " + direction;
     }
 
-    public long count(){
+    public long count(TransactionSearchRequestDto request){
 
-        return entityManager
-                .createQuery(
-                        "select count(t) from AccountTransactionEntity t",
-                        Long.class
-                )
-                .getSingleResult();
+        StringBuilder sql = new StringBuilder("""
+                                    SELECT COUNT(*)
+                                    FROM account_tran
+                                    WHERE 1=1
+                                """);
 
+
+        sql.append(getSearchQuery(request));
+
+
+        Map<String, Object> params =
+                getSearchQueryParams(request);
+
+
+        Query query = entityManager
+                .createNativeQuery(sql.toString());
+
+
+        params.forEach(query::setParameter);
+
+
+        return ((Number) query.getSingleResult())
+                .longValue();
     }
 }

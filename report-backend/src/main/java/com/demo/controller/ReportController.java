@@ -29,7 +29,7 @@ public class ReportController {
         return "report";
     }
 
-    @PostMapping
+    @GetMapping("/list")
     public String generateReport(
             @Valid
             @ModelAttribute("searchForm")
@@ -44,6 +44,9 @@ public class ReportController {
         model.addAttribute(
                 "transactions",
                 reportService.search(form));
+        model.addAttribute(
+                "searchForm",
+                form);
 
         return "report";
     }
