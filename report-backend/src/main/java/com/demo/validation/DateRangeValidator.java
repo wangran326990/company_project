@@ -1,9 +1,8 @@
 package com.demo.validation;
 
-
 import com.demo.dto.TransactionSearchRequestDto;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 public class DateRangeValidator
         implements ConstraintValidator<ValidDateRange, TransactionSearchRequestDto> {

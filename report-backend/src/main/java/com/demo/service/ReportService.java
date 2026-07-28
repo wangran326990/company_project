@@ -72,7 +72,7 @@ public class ReportService {
                 .getReportSummary(searchRequest)
                 .stream()
                 .map(ReportSummaryMapper::toVo)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public List<TransactionReportDto> getExcelData(TransactionSearchRequestDto searchRequest) {

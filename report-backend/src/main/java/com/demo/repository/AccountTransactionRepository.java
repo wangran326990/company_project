@@ -4,11 +4,15 @@ import com.demo.dto.ReportSummaryDto;
 import com.demo.dto.TransactionReportDto;
 import com.demo.dto.TransactionSearchRequestDto;
 import com.demo.entity.AccountTransactionEntity;
-import jakarta.persistence.*;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,38 +89,35 @@ public class AccountTransactionRepository {
 
 
     public List<TransactionReportDto> search(TransactionSearchRequestDto request) {
+        if(request.getSize() == 0) return new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ")
+                .append("ID as id, ")
+                .append("ACCOUNT_ID as accountId, ")
+                .append("DATETIME as datetime, ")
+                .append("TRAN_TYPE as tranType, ")
+                .append("PLATFORM_TRAN_ID as platformTranId, ")
+                .append("GAME_TRAN_ID as gameTranId, ")
+                .append("GAME_ID as gameId, ")
 
+                .append("ROUND( ")
+                .append("COALESCE(AMOUNT_REAL,0) ")
+                .append("+ COALESCE(AMOUNT_RELEASED_BONUS,0) ")
+                .append("+ COALESCE(AMOUNT_PLAYABLE_BONUS,0) ")
+                .append("+ COALESCE(AMOUNT_UNDERFLOW,0) ")
+                .append("+ COALESCE(AMOUNT_FREE_BET,0) ")
+                .append("+ COALESCE(AMOUNT_RAW_LOYALTY,0)/100.00 ")
+                .append(", 2) AS amount, ")
 
-        StringBuilder sql = new StringBuilder("""
-            SELECT
-                                    ID as id,
-                                    ACCOUNT_ID as accountId,
-                                    DATETIME as datetime,
-                                    TRAN_TYPE as tranType,
-                                    PLATFORM_TRAN_ID as platformTranId,
-                                    GAME_TRAN_ID as gameTranId,
-                                    GAME_ID as gameId,
-                
-                                    ROUND (
-                                        COALESCE(AMOUNT_REAL,0)
-                                        + COALESCE(AMOUNT_RELEASED_BONUS,0)
-                                        + COALESCE(AMOUNT_PLAYABLE_BONUS,0)
-                                        + COALESCE(AMOUNT_UNDERFLOW,0)
-                                        + COALESCE(AMOUNT_FREE_BET,0)
-                                        + COALESCE(AMOUNT_RAW_LOYALTY,0)/100.00
-                                    , 2) AS amount,
-                
-                                    ROUND (
-                                        COALESCE(BALANCE_REAL,0)
-                                        + COALESCE(BALANCE_RELEASED_BONUS,0)
-                                        + COALESCE(BALANCE_PLAYABLE_BONUS,0)
-                                        + COALESCE(BALANCE_RAW_LOYALTY,0)/100.00
-                                    , 2) AS balance
-                
-                                FROM account_tran
-            WHERE 1=1
-        """);
+                .append("ROUND( ")
+                .append("COALESCE(BALANCE_REAL,0) ")
+                .append("+ COALESCE(BALANCE_RELEASED_BONUS,0) ")
+                .append("+ COALESCE(BALANCE_PLAYABLE_BONUS,0) ")
+                .append("+ COALESCE(BALANCE_RAW_LOYALTY,0)/100.00 ")
+                .append(", 2) AS balance ")
 
+                .append("FROM account_tran ")
+                .append("WHERE 1=1 ");
         sql.append(getSearchQuery(request));
         Map<String, Object> params = getSearchQueryParams(request);
         // dynamic sorting
@@ -226,18 +227,36 @@ public class AccountTransactionRepository {
 
     private String buildOrderBy(TransactionSearchRequestDto request){
         if(request.getSortBy() == null) request.setSortBy("");
-        String sortColumn = switch (request.getSortBy()) {
-            case "amount" -> "amount";
-            case "balance" -> "balance";
-            case "tranType"-> "TRAN_TYPE";
-            case "platformTranId"->"PLATFORM_TRAN_ID";
-            case "gameTranId"->"GAME_TRAN_ID";
-            case "accountId"-> "ACCOUNT_ID";
-            case "id"->"ID";
-            case "gameId"->"GAME_ID";
-            default -> "DATETIME";
-        };
-
+        String sortColumn;
+        switch (request.getSortBy()) {
+            case "amount":
+                sortColumn = "amount";
+                break;
+            case "balance":
+                sortColumn = "balance";
+                break;
+            case "tranType":
+                sortColumn = "TRAN_TYPE";
+                break;
+            case "platformTranId":
+                sortColumn = "PLATFORM_TRAN_ID";
+                break;
+            case "gameTranId":
+                sortColumn = "GAME_TRAN_ID";
+                break;
+            case "accountId":
+                sortColumn = "ACCOUNT_ID";
+                break;
+            case "id":
+                sortColumn = "ID";
+                break;
+            case "gameId":
+                sortColumn = "GAME_ID";
+                break;
+            default:
+                sortColumn = "DATETIME";
+                break;
+        }
 
         String direction =
                 "DESC".equalsIgnoreCase(request.getSortDirection())
@@ -250,11 +269,10 @@ public class AccountTransactionRepository {
 
     public long count(TransactionSearchRequestDto request){
 
-        StringBuilder sql = new StringBuilder("""
-                                    SELECT COUNT(*)
-                                    FROM account_tran
-                                    WHERE 1=1
-                                """);
+        StringBuilder sql = new StringBuilder()
+                .append("SELECT COUNT(*)\n")
+                .append("FROM account_tran\n")
+                .append("WHERE 1=1\n");
 
 
         sql.append(getSearchQuery(request));
@@ -277,18 +295,18 @@ public class AccountTransactionRepository {
 
 
     public List<ReportSummaryDto> getReportSummary(TransactionSearchRequestDto request) {
-        StringBuilder jpql = new StringBuilder("""
-        SELECT new com.demo.dto.ReportSummaryDto(
-            a.accountId,
-            SUM(CASE WHEN a.tranType = 'GAME_BET' THEN a.amountReal ELSE 0 END) AS betSum,
-            SUM(CASE WHEN a.tranType = 'GAME_WIN' THEN a.amountReal ELSE 0 END) AS winSum,
-            SUM(CASE WHEN a.tranType = 'GAME_WIN' THEN a.amountReal ELSE 0 END)
-            +
-            SUM(CASE WHEN a.tranType = 'GAME_BET' THEN a.amountReal ELSE 0 END) AS net
-        )
-        FROM AccountTransactionEntity a
-        WHERE a.tranType IN ('GAME_BET', 'GAME_WIN')
-        """);
+        StringBuilder jpql = new StringBuilder();
+
+        jpql.append("SELECT new com.demo.dto.ReportSummaryDto( ")
+                .append("a.accountId, ")
+                .append("SUM(CASE WHEN a.tranType = 'GAME_BET' THEN a.amountReal ELSE 0 END), ")
+                .append("SUM(CASE WHEN a.tranType = 'GAME_WIN' THEN a.amountReal ELSE 0 END), ")
+                .append("SUM(CASE WHEN a.tranType = 'GAME_WIN' THEN a.amountReal ELSE 0 END) ")
+                .append("+ ")
+                .append("SUM(CASE WHEN a.tranType = 'GAME_BET' THEN a.amountReal ELSE 0 END) ")
+                .append(") ")
+                .append("FROM AccountTransactionEntity a ")
+                .append("WHERE a.tranType IN ('GAME_BET', 'GAME_WIN') ");
 
         Map<String, Object> params = new HashMap<>();
         if(request.getAccountId() != null) {
@@ -327,9 +345,7 @@ public class AccountTransactionRepository {
             params.put("platformTranId", request.getPlatformTranId());
         }
 
-        jpql.append("""
-        GROUP BY a.accountId
-        """);
+        jpql.append(" GROUP BY a.accountId");
 
         TypedQuery<ReportSummaryDto> query =
                 entityManager.createQuery(

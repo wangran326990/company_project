@@ -87,6 +87,7 @@ public class AccountTransactionRepositoryTests {
                 .endDate(end)
                 .accountId(accountId)
                 .page(1)
+                .size(0)
                 .build();
         List<TransactionReportDto> result = accountTransactionRepository.search(transactionSearchRequestDto);
         assertNotNull(result);
@@ -204,7 +205,7 @@ public class AccountTransactionRepositoryTests {
         assertFalse(result.isEmpty());
 
         result.forEach(record->{
-            assertEquals( "SPORTSBOOK2.0", record.getPlatformTranId());
+            assertEquals( "SPORTSBOOK2.0", record.getGameId());
         });
 
     }

@@ -10,21 +10,27 @@
     <artifactId>springmvc-report-app</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <!-- Deploy as WAR to Tomcat -->
     <packaging>war</packaging>
 
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
 
-        <spring.version>6.1.14</spring.version>
-        <servlet.version>6.0.0</servlet.version>
-        <jstl.version>3.0.1</jstl.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+
+        <spring.version>5.3.39</spring.version>
+
+        <hibernate.version>5.6.15.Final</hibernate.version>
+
+        <jackson.version>2.15.4</jackson.version>
+
+        <servlet.version>4.0.1</servlet.version>
+
     </properties>
 
 
     <dependencies>
+
 
         <!-- Spring MVC -->
         <dependency>
@@ -32,99 +38,129 @@
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        <!-- jackson convert java pojo to json-->
+
+
+        <!-- Jackson JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.17.2</version>
+            <version>${jackson.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.17.2</version>
+            <version>${jackson.version}</version>
         </dependency>
 
-        <!-- Servlet API provided by Jetty -->
+
+        <!-- Servlet API Java EE -->
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
             <version>${servlet.version}</version>
             <scope>provided</scope>
         </dependency>
 
 
+        <!-- JSTL -->
         <dependency>
-            <groupId>jakarta.servlet.jsp.jstl</groupId>
-            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-            <version>3.0.1</version>
-            <scope>provided</scope>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
         </dependency>
 
-        <!-- Hibernate ORM -->
+
+        <!-- Hibernate -->
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>6.5.3.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
 
 
-        <!-- Spring ORM integration -->
+        <!-- Spring ORM -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>6.1.14</version>
+            <version>${spring.version}</version>
         </dependency>
 
 
-        <!-- JPA API -->
+        <!-- JPA -->
         <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-            <version>3.1.0</version>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <version>2.2</version>
         </dependency>
 
 
-        <!-- MySQL Driver -->
+        <!-- MySQL -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.4.0</version>
+            <version>8.0.33</version>
         </dependency>
 
 
-        <!-- Spring Transaction -->
+        <!-- Transaction -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>6.1.14</version>
+            <version>${spring.version}</version>
         </dependency>
+
 
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.13</version>
+            <version>1.7.36</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>2.0.13</version>
+            <version>1.7.36</version>
         </dependency>
 
 
-        <!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.46</version>
-            <scope>compile</scope>
+            <version>1.18.34</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- For Testing-->
-        <!-- JUnit 5 -->
+
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.2.5.Final</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
+
+        <!-- CSV -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.10.0</version>
+        </dependency>
+
+
+        <!-- Tests -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -133,16 +169,14 @@
         </dependency>
 
 
-        <!-- Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.12.0</version>
+            <version>4.11.0</version>
             <scope>test</scope>
         </dependency>
 
 
-        <!-- Spring Test -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -150,12 +184,14 @@
             <scope>test</scope>
         </dependency>
 
+
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <version>3.0</version>
+            <version>2.2</version>
             <scope>test</scope>
         </dependency>
+
 
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
@@ -165,34 +201,7 @@
         </dependency>
 
 
-        <!-- Spring Validation -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
-        <!-- Bean Validation -->
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>8.0.2.Final</version>
-        </dependency>
-
-        <!-- EL implementation required by Hibernate Validator -->
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>jakarta.el</artifactId>
-            <version>4.0.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>1.13.0</version>
-        </dependency>
     </dependencies>
-
 
 
 
@@ -200,88 +209,65 @@
 
         <finalName>springmvc-jsp-demo</finalName>
 
+
         <plugins>
 
-            <!-- Compile Java -->
+
+            <!-- Java 8 Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.11.0</version>
 
                 <configuration>
-                    <release>17</release>
+
+                    <source>8</source>
+                    <target>8</target>
+
                     <annotationProcessorPaths>
+
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>1.18.34</version>
                         </path>
+
                     </annotationProcessorPaths>
+
                 </configuration>
+
             </plugin>
 
 
-            <!-- Build WAR -->
+
+            <!-- WAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
             </plugin>
 
+
+
+            <!-- Jetty 9 for Java 8 -->
+
             <plugin>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-maven-plugin</artifactId>
-                <version>12.0.12</version>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.4.57.v20241219</version>
 
                 <configuration>
+
                     <httpConnector>
                         <port>8080</port>
                     </httpConnector>
-                </configuration>
-            </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>sql-maven-plugin</artifactId>
-                <version>1.5</version>
-
-                <dependencies>
-                    <dependency>
-                        <groupId>com.mysql</groupId>
-                        <artifactId>mysql-connector-j</artifactId>
-                        <version>8.4.0</version>
-                    </dependency>
-                </dependencies>
-
-                <configuration>
-                    <driver>com.mysql.cj.jdbc.Driver</driver>
-                    <url>jdbc:mysql://localhost:3306</url>
-                    <username>root</username>
-                    <password>root</password>
                 </configuration>
 
-                <executions>
-
-                    <execution>
-                        <id>create-test-database</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-
-                        <configuration>
-                            <srcFiles>
-                                <srcFile>
-                                    src/test/resources/sql/create-database.sql
-                                </srcFile>
-                            </srcFiles>
-                        </configuration>
-
-                    </execution>
-
-                </executions>
-
             </plugin>
+
+
+
         </plugins>
 
     </build>
