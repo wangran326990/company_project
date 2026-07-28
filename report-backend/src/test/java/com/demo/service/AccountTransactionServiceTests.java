@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class AccountTransactionServiceTest {
+public class AccountTransactionServiceTests {
     @Mock
     private AccountTransactionRepository accountTransactionRepository;
 

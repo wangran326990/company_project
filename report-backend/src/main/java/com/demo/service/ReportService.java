@@ -37,7 +37,7 @@ public class ReportService {
                 (int)Math.ceil(
                         (double) total / size
                 );
-        if(page < 0) {
+        if(page <= 0) {
             page = 1;
             request.setPage(1);
         }

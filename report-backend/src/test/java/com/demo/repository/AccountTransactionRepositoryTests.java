@@ -1,6 +1,7 @@
 package com.demo.repository;
 
 import com.demo.config.TestHibernateConfig;
+import com.demo.dto.ReportSummaryDto;
 import com.demo.dto.TransactionReportDto;
 import com.demo.dto.TransactionSearchRequestDto;
 import com.demo.entity.AccountTransactionEntity;
@@ -46,7 +47,6 @@ public class AccountTransactionRepositoryTests {
                     "/sql/data.sql"
             }
     )
-    @Transactional
     void findRangeByAccountId_returnRecordFromRange() {
         Integer accountId = 2166;
         LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
@@ -76,7 +76,6 @@ public class AccountTransactionRepositoryTests {
                     "/sql/data.sql"
             }
     )
-    @Transactional
     void findRangeByAccountIdNoPageSet_returnRecordFromRange() {
         Integer accountId = 2166;
         LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
@@ -102,7 +101,6 @@ public class AccountTransactionRepositoryTests {
                     "/sql/data.sql"
             }
     )
-    @Transactional
     void findRange_withPageSize_returnsExpectedNumberOfRecords() {
         Integer accountId = 2166;
         LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
@@ -129,7 +127,6 @@ public class AccountTransactionRepositoryTests {
                     "/sql/data.sql"
             }
     )
-    @Transactional
     void findRange_withGameTranId_returnsExpectedNumberOfRecords() {
         Integer accountId = 2166;
         LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
@@ -159,7 +156,6 @@ public class AccountTransactionRepositoryTests {
                     "/sql/data.sql"
             }
     )
-    @Transactional
     void findRange_withPlatformTranId_returnsExpectedNumberOfRecords() {
         LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
         LocalDateTime end = LocalDateTime.of(2026, 1,1,1,0,0);
@@ -188,7 +184,7 @@ public class AccountTransactionRepositoryTests {
                     "/sql/data.sql"
             }
     )
-    @Transactional
+
     void findRange_withGameId_returnsExpectedNumberOfRecords() {
         LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
         LocalDateTime end = LocalDateTime.of(2026, 1,1,1,0,0);
@@ -209,4 +205,240 @@ public class AccountTransactionRepositoryTests {
         });
 
     }
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+    void reportSummeryBySelectedRangeAndAccount_returnExpectedSummary() {
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2026, 1,1,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .endDate(end)
+                .accountId(2)
+                .build();
+        List<ReportSummaryDto> result = accountTransactionRepository.getReportSummary(transactionSearchRequestDto);
+        assertEquals(1,result.size());
+        assertEquals(2, result.get(0).getAccountId());
+        assertEquals(new BigDecimal("-28025.54"), result.get(0).getNet());
+        assertEquals(new BigDecimal("-29374.90"), result.get(0).getBetSum());
+        assertEquals(new BigDecimal("1349.36"), result.get(0).getWinSum());
+    }
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+    void reportSummeryBySelectedRange_returnExpectedSummary() {
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2025, 7,29,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .endDate(end)
+                .build();
+        List<ReportSummaryDto> result = accountTransactionRepository.getReportSummary(transactionSearchRequestDto);
+        assertEquals(1,result.size());
+        assertEquals(2166, result.get(0).getAccountId());
+        assertEquals(new BigDecimal("-24.00"), result.get(0).getNet());
+        assertEquals(new BigDecimal("-24.00"), result.get(0).getBetSum());
+        assertEquals(new BigDecimal("0.00"), result.get(0).getWinSum());
+    }
+
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+    void reportSummeryBySelectedRange_withTranType_returnExpectedSummary() {
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2025, 7,29,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .tranType("GAME_BET")
+                .endDate(end)
+                .build();
+        List<ReportSummaryDto> result = accountTransactionRepository.getReportSummary(transactionSearchRequestDto);
+        assertEquals(1,result.size());
+        assertEquals(2166, result.get(0).getAccountId());
+        assertEquals(new BigDecimal("-24.00"), result.get(0).getNet());
+        assertEquals(new BigDecimal("-24.00"), result.get(0).getBetSum());
+        assertEquals(new BigDecimal("0.00"), result.get(0).getWinSum());
+    }
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+    void reportSummeryBySelectedRange_withPlatformTranId_returnExpectedSummary() {
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2026, 7,29,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .platformTranId("510000096174")
+                .endDate(end)
+                .build();
+        List<ReportSummaryDto> result = accountTransactionRepository.getReportSummary(transactionSearchRequestDto);
+        assertEquals(1,result.size());
+        assertEquals(2166, result.get(0).getAccountId());
+        assertEquals(new BigDecimal("-10.00"), result.get(0).getNet());
+        assertEquals(new BigDecimal("-10.00"), result.get(0).getBetSum());
+        assertEquals(new BigDecimal("0.00"), result.get(0).getWinSum());
+    }
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+    void reportSummeryBySelectedRange_withGameTranId_returnExpectedSummary() {
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2025, 7,29,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .gameTranId("10000011300")
+                .endDate(end)
+                .build();
+        List<ReportSummaryDto> result = accountTransactionRepository.getReportSummary(transactionSearchRequestDto);
+        assertEquals(1,result.size());
+        assertEquals(2166, result.get(0).getAccountId());
+        assertEquals(new BigDecimal("-10.00"), result.get(0).getNet());
+        assertEquals(new BigDecimal("-10.00"), result.get(0).getBetSum());
+        assertEquals(new BigDecimal("0.00"), result.get(0).getWinSum());
+    }
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+    void reportSummeryBySelectedRange_withGameId_returnExpectedSummary() {
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2025, 7,29,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .gameId("SPORTSBOOK2.0")
+                .endDate(end)
+                .build();
+        List<ReportSummaryDto> result = accountTransactionRepository.getReportSummary(transactionSearchRequestDto);
+        assertEquals(1,result.size());
+        assertEquals(2166, result.get(0).getAccountId());
+        assertEquals(new BigDecimal("-24.00"), result.get(0).getNet());
+        assertEquals(new BigDecimal("-24.00"), result.get(0).getBetSum());
+        assertEquals(new BigDecimal("0.00"), result.get(0).getWinSum());
+    }
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+    void countRangeByAccountId_returnCorrectCount() {
+        Integer accountId = 2166;
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2026, 1,1,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .endDate(end)
+                .accountId(accountId)
+                .build();
+        long count = accountTransactionRepository.count(transactionSearchRequestDto);
+        assertEquals(1056, count);
+
+    }
+
+
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+    void count_withGameTranId_returnsExpectedNumberOfRecords() {
+        Integer accountId = 2166;
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2026, 1,1,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .endDate(end)
+                .gameTranId("10000011300")
+                .build();
+        long count = accountTransactionRepository.count(transactionSearchRequestDto);
+        assertEquals(1, count);
+
+    }
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+    void count_withPlatformTranId_returnsExpectedNumberOfRecords() {
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2026, 1,1,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .endDate(end)
+                .platformTranId("510000096174")
+                .page(1)
+                .size(50)
+                .build();
+        long count = accountTransactionRepository.count(transactionSearchRequestDto);
+        assertEquals(1, count);
+
+    }
+
+    @Test
+    @Sql(
+            scripts={
+                    "/sql/schema.sql",
+                    "/sql/data.sql"
+            }
+    )
+
+    void count_withGameId_returnsExpectedNumberOfRecords() {
+        LocalDateTime start = LocalDateTime.of(2025, 1,1,0,0);
+        LocalDateTime end = LocalDateTime.of(2026, 1,1,1,0,0);
+        TransactionSearchRequestDto transactionSearchRequestDto = TransactionSearchRequestDto
+                .builder()
+                .startDate(start)
+                .endDate(end)
+                .gameId("SPORTSBOOK2.0")
+                .build();
+        long result = accountTransactionRepository.count(transactionSearchRequestDto);
+        assertEquals(270, result);
+
+    }
+
 }
