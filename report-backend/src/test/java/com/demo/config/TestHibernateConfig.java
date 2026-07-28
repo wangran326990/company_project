@@ -48,7 +48,13 @@ public class TestHibernateConfig {
 
         ds.setDriverClassName(driverClassName);
 
-        String url = "jdbc:mysql://localhost:3306/demo_test";
+        String url = env.getProperty("MYSQL_CONNECT_URL");
+        String name = env.getProperty("MYSQL_TEST_DB_NAME");
+        url = url != null
+                ? url
+                : "jdbc:mysql://localhost:3306/";
+        name = name != null ? name: "demo_test";
+        url = url + name;
 
 
         logger.info("hibernate.connection.url:{}", url);

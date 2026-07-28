@@ -38,10 +38,13 @@ public class HibernateConfig {
 
         ds.setDriverClassName(driverClassName);
 
-        String url = env.getProperty("hibernate.connection.url");
+        String url = env.getProperty("MYSQL_CONNECT_URL");
+        String name = env.getProperty("MYSQL_DB_NAME");
         url = url != null
                 ? url
-                : "jdbc:mysql://localhost:3306/demo";
+                : "jdbc:mysql://localhost:3306/";
+        name = name != null ? name: "demo";
+        url = url + name;
 
         logger.info("hibernate.connection.url:{}", url);
         ds.setUrl(url);

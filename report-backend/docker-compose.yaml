@@ -1,0 +1,52 @@
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transaction-report
+    ports:
+      - "8080:8080"
+    networks:
+      - bet99_network
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  db:
+    image: mysql:8.0
+    container_name: mysql8
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: demo
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-uroot",
+          "-proot"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mysql_company_data:/var/lib/mysql
+    networks:
+      - bet99_network
+
+volumes:
+  mysql_company_data:
+
+
+networks:
+  bet99_network:
+    driver: "bridge"

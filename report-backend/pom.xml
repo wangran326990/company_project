@@ -25,7 +25,7 @@
         <jackson.version>2.15.4</jackson.version>
 
         <servlet.version>4.0.1</servlet.version>
-
+        <mysql.url>jdbc:mysql://localhost:3306</mysql.url>
     </properties>
 
 
@@ -69,6 +69,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
+            <scope>provided</scope>
         </dependency>
 
 
@@ -285,7 +286,7 @@
 
                 <configuration>
                     <driver>com.mysql.cj.jdbc.Driver</driver>
-                    <url>jdbc:mysql://localhost:3306</url>
+                    <url>${mysql.url}</url>
                     <username>root</username>
                     <password>root</password>
                 </configuration>
