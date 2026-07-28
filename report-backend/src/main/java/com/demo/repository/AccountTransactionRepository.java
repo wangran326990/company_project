@@ -125,8 +125,9 @@ public class AccountTransactionRepository {
 
 
         // pagination
+
         query.setFirstResult(
-                (request.getPage() - 1) * request.getSize()
+                (request.getPage() - 1) < 0 ? 0: (request.getPage() - 1)  * request.getSize()
         );
 
         query.setMaxResults(

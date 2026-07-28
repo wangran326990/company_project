@@ -10,7 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/report")
+@RequestMapping("")
 public class ReportController {
 
     private final ReportService reportService;
@@ -29,7 +29,7 @@ public class ReportController {
         return "report";
     }
 
-    @GetMapping("/list")
+    @GetMapping("/report/list")
     public String generateReport(
             @Valid
             @ModelAttribute("searchForm")

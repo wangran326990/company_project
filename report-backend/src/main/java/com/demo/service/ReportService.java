@@ -29,11 +29,6 @@ public class ReportService {
         int page = request.getPage();
         int size = request.getSize();
 
-
-        List<TransactionReportDto> data =
-                accountTransactionRepository.search(request);
-
-
         long total =
                 accountTransactionRepository.count(request);
 
@@ -42,6 +37,23 @@ public class ReportService {
                 (int)Math.ceil(
                         (double) total / size
                 );
+        if(page < 0) {
+            page = 1;
+            request.setPage(1);
+        }
+
+        if(page > totalPages){
+
+            page = totalPages;
+            request.setPage(totalPages);
+        }
+
+
+        List<TransactionReportDto> data =
+                accountTransactionRepository.search(request);
+
+
+
 
 
         return PaginationResponseVo

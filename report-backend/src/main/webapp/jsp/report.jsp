@@ -42,6 +42,29 @@
             path="page"
             cssClass="error"/>
 
+    <form:errors
+            path="accountId"
+            cssClass="error"/>
+
+    <form:errors
+                path="tranType"
+                cssClass="error"/>
+
+    <form:errors
+                path="gameId"
+                cssClass="error"/>
+    <form:errors
+                path="platformTranId"
+                cssClass="error"/>
+    <form:errors
+                path="gameTranId"
+                cssClass="error"/>
+    <form:errors
+                    path="size"
+                    cssClass="error"/>
+    <form:errors
+                path="sizeValid"
+                cssClass="error"/>
 
     <table>
 
@@ -142,6 +165,7 @@
 
 
 <c:if test="${not empty transactions}">
+
 <form:form
         id="searchForm"
         method="get"
@@ -182,6 +206,16 @@
                        value="${searchForm.size}"/>
 
 <div>
+
+    <div>
+        <button type="submit" id="searchBtn">
+            Search
+        </button>
+
+        <button id="downloadBtn">
+            Download CSV
+        </button>
+    </div>
     <table id="report-table">
 
 
@@ -500,18 +534,6 @@
 
 </div>
 
-    <br>
-
-
-    <button type="submit" id="searchBtn">
-        Search
-    </button>
-
-    <button id="downloadBtn">
-        Download CSV
-    </button>
-
-    <br>
     <br>
 
 
