@@ -68,6 +68,12 @@ public class AccountTransactionRepository {
             jpql.append(" AND ate.accountId = :accountId");
         }
         TypedQuery<AccountTransactionEntity> query = entityManager.createQuery(jpql.toString(), AccountTransactionEntity.class);
+        if(startDate == null) {
+            startDate = LocalDateTime.now();
+        }
+        if(endDate == null) {
+            endDate = LocalDateTime.now();
+        }
         query.setParameter("startDate", startDate);
         query.setParameter("endDate", endDate);
         if(accountId != null) {
@@ -219,7 +225,7 @@ public class AccountTransactionRepository {
 
 
     private String buildOrderBy(TransactionSearchRequestDto request){
-
+        if(request.getSortBy() == null) request.setSortBy("");
         String sortColumn = switch (request.getSortBy()) {
             case "amount" -> "amount";
             case "balance" -> "balance";

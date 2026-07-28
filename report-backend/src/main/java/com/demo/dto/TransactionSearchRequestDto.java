@@ -2,13 +2,19 @@ package com.demo.dto;
 
 import com.demo.validation.ValidDateRange;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 @Data
 @ValidDateRange
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionSearchRequestDto {
     @Positive(message = "Account ID must be positive")
     private Integer accountId;
