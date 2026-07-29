@@ -311,7 +311,7 @@ docker compose up -d
 2. Execute the SQL script: [here](https://github.com/wangran326990/company_project/blob/master/src/test/resources/sql/create-database.sql).
 
 ```
-
+src/test/resources/sql/create-database.sql
 ```
 
 3. Run the SQL script to create the database and test data.
