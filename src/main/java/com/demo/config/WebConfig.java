@@ -6,10 +6,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
 
 
 @Configuration
@@ -44,5 +47,17 @@ public class WebConfig implements WebMvcConfigurer {
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
+
+//    @Override
+//    public Validator getValidator() {
+//        return validator(messageSource());
+//    }
+//
+//    @Bean
+//    public LocalValidatorFactoryBean validator(MessageSource messageSource) {
+//        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+//        validator.setValidationMessageSource(messageSource);
+//        return validator;
+//    }
 
 }
