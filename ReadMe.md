@@ -24,6 +24,7 @@ Before running this project, make sure the following software is installed:
 - Maven 3.8+
 - MySQL 8
 - Git
+- Docker (Docker Desktop)
 
 > **Note:** If Docker is installed, Java, Maven, and MySQL do not need to be installed locally.
 
