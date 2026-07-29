@@ -29,6 +29,57 @@ Before running this project, make sure the following software is installed:
 > **Note:** If Docker is installed, Java, Maven, and MySQL do not need to be installed locally.
 
 ---
+# Server and Client Design Information
+
+This section provides an overview of the server-side and client-side design to help developers understand the project structure and make future changes.
+
+### Features
+- Generate report based on DateTime range and accountId(Optional)
+- Filter report by column (platform_tran_id,game_tran_id,account_id,game_id,tran_type)
+- Sort By all provide columns both (ASC/DEC).
+- Pagination 25 or 50 options can be selected.
+- Export to CSV
+- Summary section
+
+### Server Design
+
+The application follows a layered architecture based on **Java 8, Spring MVC, Hibernate/JPA, and MySQL 8**.
+
+### Architecture Overview
+
+The server is organized into the following layers:
+
+Controller Layer->Service Layer->Repository Layer->Database (MySQL)
+
+Client will send a get request to the server endpoint to get the report based on different conditions sent by the client and also generate the Summary for the selected rows.
+
+### Page Endpoint
+
+GET http://localhost:8080
+
+Home Page 
+
+GET http://localhost:8080/report/list
+
+Search Page
+
+Example
+``` 
+HTTP Get http://localhost:8080/report/list?startDate=2025-02-28T10%3A36&endDate=2026-06-01T10%3A36&accountId=
+```
+
+### API Endpoint
+- Get http://localhost:8080/api/v1/report/summary
+
+  Get the report Summary
+- Get http://localhost:8080/api/v1/report/export
+  
+  Get the csv file of the report
+
+### Client Design
+Simple JSP page and JQuery design to control the how to display the report page.
+
+---
 
 # Clone Project
 
