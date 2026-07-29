@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: transaction-report
+    container_name: transaction-report-app
     ports:
       - "8080:8080"
     networks:
