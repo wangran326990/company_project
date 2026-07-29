@@ -28,8 +28,10 @@ CREATE TABLE `account_tran` (
                                 `GAME_SESSION_ID` varchar(255) DEFAULT NULL,
                                 `EXTERNAL_GAME_SESSION_ID` varchar(255) DEFAULT NULL,
                                 PRIMARY KEY (`ID`),
-                                KEY `IDX_ACCOUNT_TRAN_1` (`ACCOUNT_ID`,`DATETIME`),
-                                KEY `IDX_ACCOUNT_TRAN_2` (`GAME_TRAN_ID`,`PLATFORM_ID`),
-                                KEY `IDX_ACCOUNT_TRAN_3` (`PLATFORM_TRAN_ID`,`PLATFORM_ID`)
+                                KEY `IDX_ACCOUNT_TRAN_1` (`ACCOUNT_ID`, `DATETIME`) USING BTREE,
+                                KEY `IDX_ACCOUNT_TRAN_DATETIME` (`DATETIME`) USING BTREE,
+                                KEY `IDX_ACCOUNT_TRAN_GAME_ID` (`GAME_ID`) USING BTREE,
+                                KEY `IDX_ACCOUNT_TRAN_2` (`GAME_TRAN_ID`) USING BTREE,
+                                KEY `IDX_ACCOUNT_TRAN_3` (`PLATFORM_TRAN_ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=6996 DEFAULT CHARSET=utf8mb3;
 
