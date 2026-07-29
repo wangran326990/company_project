@@ -19,6 +19,11 @@ import java.util.Map;
 
 @Repository
 public class AccountTransactionRepository {
+    /**
+     *  It does not reuse the same EntityManager
+     *  It usually creates a temporary one for the operation
+     *  The persistence context is not kept open
+     */
     @PersistenceContext
     private EntityManager entityManager;
 

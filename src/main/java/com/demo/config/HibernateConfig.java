@@ -1,5 +1,6 @@
 package com.demo.config;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-
+/**
+ * enable spring transactional support
+ */
 @EnableTransactionManagement
 public class HibernateConfig {
     @Autowired
@@ -25,11 +28,15 @@ public class HibernateConfig {
     private static final Logger logger =
             LoggerFactory.getLogger(WebConfig.class);
 
+    /**
+     * A DataSource represents your database connection provider.
+     * @return
+     */
     @Bean
     public DataSource dataSource() {
-
-        DriverManagerDataSource ds =
-                new DriverManagerDataSource();
+        HikariDataSource ds = new HikariDataSource();
+//        DriverManagerDataSource ds =
+//                new DriverManagerDataSource();
         String driverClassName = env.getProperty("hibernate.connection.driver_class");
         driverClassName = driverClassName != null
                 ? driverClassName
@@ -47,7 +54,7 @@ public class HibernateConfig {
         url = url + name;
 
         logger.info("hibernate.connection.url:{}", url);
-        ds.setUrl(url);
+        ds.setJdbcUrl(url);
 
         String username = env.getProperty("hibernate.connection.username");
         username = (username != null)
@@ -65,10 +72,40 @@ public class HibernateConfig {
         logger.info("hibernate.connection.password:{}", password);
         ds.setPassword(password);
 
+        // Maximum number of connections in the pool
+        ds.setMaximumPoolSize(10);
+
+
+        // Minimum number of idle connections kept ready 5 connect minimal
+        ds.setMinimumIdle(5);
+
+
+        // Maximum time to wait for a connection
+        // 30 seconds
+        ds.setConnectionTimeout(30000);
+
+
+        // Close idle connections after 10 minutes
+        ds.setIdleTimeout(600000);
+
+
+        // Recycle connections after 30 minutes
+        // Prevent stale MySQL connections
+        ds.setMaxLifetime(1800000);
+
+
+        logger.info(
+                "HikariCP connection pool initialized"
+        );
 
         return ds;
     }
 
+    /**
+     * This creates Hibernate's EntityManagerFactory which will assign entity manager instance to each thread
+     * @param dataSource
+     * @return
+     */
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
@@ -86,7 +123,7 @@ public class HibernateConfig {
                 "com.demo.entity"
         );
 
-
+        // set hibernate to the JPA implementation provider
         emf.setJpaVendorAdapter(
                 new HibernateJpaVendorAdapter()
         );
