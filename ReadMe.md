@@ -4,7 +4,7 @@ A lightweight web application for generating reports from game transaction recor
 
 ## Tech Stack
 
-- Java 8
+- Java 8+
 - Maven 3.8+
 - Spring MVC
 - Hibernate / JPA
@@ -12,7 +12,7 @@ A lightweight web application for generating reports from game transaction recor
 - JSP
 - JUnit 5
 - Mockito
-- Docker (optional)
+- Docker
 
 ---
 
