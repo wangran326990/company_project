@@ -50,7 +50,7 @@ public class HibernateConfig {
         ds.setUrl(url);
 
         String username = env.getProperty("hibernate.connection.username");
-        username = username != null
+        username = (username != null)
                 ? username
                 : "root";
 
@@ -58,8 +58,8 @@ public class HibernateConfig {
         ds.setUsername(username);
 
         String password = env.getProperty("hibernate.connection.password");
-        password = password != null
-                ? username
+        password = (password != null)
+                ? password
                 : "root";
 
         logger.info("hibernate.connection.password:{}", password);

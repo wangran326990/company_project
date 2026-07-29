@@ -50,7 +50,7 @@ public class TestHibernateConfig {
 
         String url = env.getProperty("MYSQL_CONNECT_URL");
         String name = env.getProperty("MYSQL_TEST_DB_NAME");
-        url = url != null
+        url = (url != null)
                 ? url
                 : "jdbc:mysql://localhost:3306/";
         name = name != null ? name: "demo_test";
@@ -61,7 +61,7 @@ public class TestHibernateConfig {
         ds.setUrl(url);
 
         String username = env.getProperty("hibernate.connection.username");
-        username = username != null
+        username = (username != null)
                 ? username
                 : "root";
 
@@ -69,8 +69,8 @@ public class TestHibernateConfig {
         ds.setUsername(username);
 
         String password = env.getProperty("hibernate.connection.password");
-        password = password != null
-                ? username
+        password = (password != null)
+                ? password
                 : "root";
 
         logger.info("hibernate.connection.password:{}", password);
