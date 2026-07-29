@@ -38,7 +38,7 @@ git clone https://github.com/wangran326990/company_project.git
 
 ## Quick Setup
 This project provides a Docker Compose file that can be used to quickly set up the application. 
-
+make sure no other software using port 8080 and 3306
 
 1. download docker desktop [here](https://www.docker.com/products/docker-desktop/).
 2. install docker desktop ([Window](https://docs.docker.com/desktop/setup/install/windows-install/)/[Mac](https://docs.docker.com/desktop/setup/install/mac-install/))
@@ -96,6 +96,11 @@ OpenJDK 64-Bit Server VM Corretto-8.502.07.1 (build 25.502-b07, mixed mode)
 
 2. unzip it and details of how to install can be find [here](https://maven.apache.org/install.html).
 
+Verify installation:
+
+```bash
+mvn -version
+```
 
 ### MySQL Setup (Optional/Can simply use Docker MySQL 8)
 1. download [MySQL8](https://www.mysql.com/downloads/)
@@ -111,9 +116,91 @@ OpenJDK 64-Bit Server VM Corretto-8.502.07.1 (build 25.502-b07, mixed mode)
     sudo lsof -i tcp:3306
     ```
 3. install mysql([Window](https://dev.mysql.com/downloads/installer/)/[Mac](https://dev.mysql.com/doc/refman/8.4/en/macos-installation.html))
-4. The username/password need to be set to root/root. otherwise few hardcoded place need to be changed 
+4. The username/password need to be set to root/root. otherwise few hardcoded place need to be changed please change [TestHibernateConfig.java](https://github.com/wangran326990/company_project/blob/master/src/test/java/com/demo/config/TestHibernateConfig.java#L64) [HibernateConfig.java](https://github.com/wangran326990/company_project/blob/master/src/main/java/com/demo/config/HibernateConfig.java#L55) and [pom.xml](https://github.com/wangran326990/company_project/blob/master/pom.xml#L290) files.
+
+### Docker MySQL Setup
+1. install docker.
+2. create a docker-compose.yml file with below code.
+    ```
+    services:
+    db:
+        image: mysql:8.0
+        container_name: mysql8
+        restart: always
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+        MYSQL_ROOT_HOST: "%"
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: demo
+        ports:
+        - "3306:3306"
+        healthcheck:
+        test:
+            [
+            "CMD",
+            "mysqladmin",
+            "ping",
+            "-h",
+            "localhost",
+            "-uroot",
+            "-proot"
+            ]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+        volumes:
+        - mysql_company_data:/var/lib/mysql
+        networks:
+        - bet99_network
+
+    volumes:
+    mysql_company_data:
 
 
+    networks:
+    bet99_network:
+        driver: "bridge"
+    ```
+3. run docker compose up command
+
+
+### Import Testing Data
+1. Use a MySQL client application copy sql from [create-database.sql](https://github.com/wangran326990/company_project/blob/master/src/test/resources/sql/create-database.sql)
+2. use MySQL client run the sql.
+
+### Testing the setup
+1. clone project
+```
+git clone https://github.com/wangran326990/company_project.git
+```
+```
+cd company_project
+```
+2. run porject 
+```
+mvn jetty:run
+```
+If everything correct below result will show
+```
+[INFO] Started ServerConnector@2acbe46d{HTTP/1.1, (http/1.1)}{0.0.0.0:8080}
+[INFO] Started @9357ms
+[INFO] Started Jetty Server
+```
+3. open brower go to
+```
+http://localhost:8080
+```
+
+### Debug Project
+
+1. Install Intellij
+2. open your project.
+3. Sync all Maven projects as below 
+![Image description](./imgs/Build_Project.png)
+
+4. Run Debug 
+
+![Image description](./imgs/Debug_Project.png)
 
 
 
