@@ -13,14 +13,12 @@ SELECT
       	    + COALESCE(AMOUNT_PLAYABLE_BONUS, 0)
       	    + COALESCE(AMOUNT_UNDERFLOW, 0)
       	    + COALESCE(AMOUNT_FREE_BET, 0)
-      	    + COALESCE(AMOUNT_RAW_LOYALTY, 0) / 100
       	) AS amount,
      
           (
               COALESCE(BALANCE_REAL, 0)
               + COALESCE(BALANCE_RELEASED_BONUS, 0)
               + COALESCE(BALANCE_PLAYABLE_BONUS, 0)
-              + COALESCE(BALANCE_RAW_LOYALTY, 0) / 100
           ) AS balance
       FROM account_tran WHERE ID = 71;
 

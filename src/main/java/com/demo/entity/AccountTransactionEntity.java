@@ -117,28 +117,21 @@ public class AccountTransactionEntity {
     @Column(name = "EXTERNAL_GAME_SESSION_ID", length = 255)
     private String externalGameSessionId;
 
-
     public BigDecimal getAmountSum() {
-        //TODO ask how do deal with amountRawLoyalty
+        //TODO ask how do deal with amoun tRawLoyalty
         BigDecimal amountReal = (this.amountReal == null) ? new BigDecimal("0.00") : this.amountReal;
-        BigDecimal amountRawLoyaltyBigDecimal = BigDecimal.valueOf(amountRawLoyalty)
-                .movePointLeft(2);
         return amountReal.add(amountFreeBet)
                 .add(amountUnderflow)
                 .add(amountPlayableBonus)
-                .add(amountReleasedBonus)
-                .add(amountRawLoyaltyBigDecimal);
+                .add(amountReleasedBonus);
     }
 
     public BigDecimal getBalanceSum() {
 
         BigDecimal balanceReal = (this.balanceReal == null) ? new BigDecimal("0.00") : this.balanceReal;
-            BigDecimal amountRawLoyaltyBigDecimal = BigDecimal.valueOf(amountRawLoyalty)
-                    .movePointLeft(2);
         return balanceReal
                 .add(balancePlayableBonus)
-                .add(balanceReleasedBonus)
-                .add(amountRawLoyaltyBigDecimal);
+                .add(balanceReleasedBonus);
     }
 
 

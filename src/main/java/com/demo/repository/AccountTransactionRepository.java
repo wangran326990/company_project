@@ -39,14 +39,12 @@ public class AccountTransactionRepository {
      * 	    + COALESCE(AMOUNT_PLAYABLE_BONUS, 0)
      * 	    + COALESCE(AMOUNT_UNDERFLOW, 0)
      * 	    + COALESCE(AMOUNT_FREE_BET, 0)
-     * 	    + COALESCE(AMOUNT_RAW_LOYALTY, 0) / 100
      * 	) AS amount,
      *
      *     (
      *         COALESCE(BALANCE_REAL, 0)
      *         + COALESCE(BALANCE_RELEASED_BONUS, 0)
      *         + COALESCE(BALANCE_PLAYABLE_BONUS, 0)
-     *         + COALESCE(BALANCE_RAW_LOYALTY, 0) / 100
      *     ) AS balance
      *
      * FROM account_tran WHERE ID = 71;
@@ -106,14 +104,14 @@ public class AccountTransactionRepository {
                 .append("+ COALESCE(AMOUNT_PLAYABLE_BONUS,0) ")
                 .append("+ COALESCE(AMOUNT_UNDERFLOW,0) ")
                 .append("+ COALESCE(AMOUNT_FREE_BET,0) ")
-                .append("+ COALESCE(AMOUNT_RAW_LOYALTY,0)/100.00 ")
+                //.append("+ COALESCE(AMOUNT_RAW_LOYALTY,0)/100.00 ")
                 .append(", 2) AS amount, ")
 
                 .append("ROUND( ")
                 .append("COALESCE(BALANCE_REAL,0) ")
                 .append("+ COALESCE(BALANCE_RELEASED_BONUS,0) ")
                 .append("+ COALESCE(BALANCE_PLAYABLE_BONUS,0) ")
-                .append("+ COALESCE(BALANCE_RAW_LOYALTY,0)/100.00 ")
+                //.append("+ COALESCE(BALANCE_RAW_LOYALTY,0)/100.00 ")
                 .append(", 2) AS balance ")
 
                 .append("FROM account_tran ")
