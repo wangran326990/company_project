@@ -93,6 +93,7 @@ public class AccountTransactionRepository {
 
     public List<TransactionReportDto> search(TransactionSearchRequestDto request) {
         if(request.getSize() == 0) return new ArrayList<>();
+        /*
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ")
                 .append("ID as id, ")
@@ -146,9 +147,123 @@ public class AccountTransactionRepository {
 
 
         return (List<TransactionReportDto>) query.getResultList();
+
+        */
+        StringBuilder jpql = new StringBuilder();
+
+        jpql.append("SELECT new com.demo.dto.TransactionReportDto(");
+        jpql.append("    t.id, ");
+        jpql.append("    t.accountId, ");
+        jpql.append("    t.dateTime, ");
+        jpql.append("    t.tranType, ");
+        jpql.append("    t.platformTranId, ");
+        jpql.append("    t.gameTranId, ");
+        jpql.append("    t.gameId, ");
+
+        jpql.append("    COALESCE(t.amountReal, 0) + ");
+        jpql.append("    COALESCE(t.amountReleasedBonus, 0) + ");
+        jpql.append("    COALESCE(t.amountPlayableBonus, 0) + ");
+        jpql.append("    COALESCE(t.amountUnderflow, 0) + ");
+        jpql.append("    COALESCE(t.amountFreeBet, 0), ");
+
+        jpql.append("    COALESCE(t.balanceReal, 0) + ");
+        jpql.append("    COALESCE(t.balanceReleasedBonus, 0) + ");
+        jpql.append("    COALESCE(t.balancePlayableBonus, 0) ");
+
+        jpql.append(") ");
+        jpql.append("FROM AccountTransactionEntity t ");
+        jpql.append("WHERE 1 = 1 ");
+
+        jpql.append(getJPQLSearchQuery(request));
+        jpql.append(buildJPQLOrderBy(request));
+        Map<String, Object> params = getSearchJPQLParams(request);
+        TypedQuery<TransactionReportDto> query =
+                entityManager.createQuery(
+                        jpql.toString(),
+                        TransactionReportDto.class
+                );
+        params.forEach(query::setParameter);
+
+        query.setFirstResult(
+                (request.getPage() - 1) < 0 ? 0: (request.getPage() - 1)  * request.getSize()
+        );
+
+        query.setMaxResults(
+                request.getSize()
+        );
+        return query.getResultList();
+    }
+    private String getJPQLSearchQuery(TransactionSearchRequestDto request) {
+        StringBuilder jpql = new StringBuilder();
+        if(request.getAccountId() != null) {
+            jpql.append(" AND t.accountId = :accountId ");
+
+        }
+
+        if (request.getStartDate() != null) {
+            jpql.append(" AND t.dateTime >= :startDate ");
+        }
+
+        if (request.getEndDate() != null) {
+            jpql.append(" AND t.dateTime <= :endDate ");
+        }
+
+        if(request.getTranType() != null && !request.getTranType().isEmpty()){
+            jpql.append(" AND t.tranType = :tranType ");
+        }
+
+
+        if(request.getGameId() != null && !request.getGameId().isEmpty()){
+            jpql.append(" AND t.gameId = :gameId ");
+        }
+
+        if(request.getGameTranId() != null && !request.getGameTranId().isEmpty()){
+            jpql.append(" AND t.gameTranId = :gameTranId ");
+        }
+
+
+        if(request.getPlatformTranId() != null && !request.getPlatformTranId().isEmpty()){
+            jpql.append(" AND t.platformTranId = :platformTranId ");
+        }
+        return jpql.toString();
     }
 
-    private static Map<String, Object> getSearchQueryParams(TransactionSearchRequestDto request) {
+    private Map<String, Object> getSearchJPQLParams(TransactionSearchRequestDto request) {
+        Map<String,Object> params = new HashMap<>();
+
+        if(request.getAccountId() != null) {
+            params.put("accountId", request.getAccountId());
+        }
+
+        if (request.getStartDate() != null) {
+            params.put("startDate", request.getStartDate());
+        }
+
+        if (request.getEndDate() != null) {
+            params.put("endDate", request.getEndDate());
+        }
+
+        if(request.getTranType() != null && !request.getTranType().isEmpty()){
+            params.put("tranType", request.getTranType());
+        }
+
+
+        if(request.getGameId() != null && !request.getGameId().isEmpty()){
+            params.put("gameId", request.getGameId());
+        }
+
+        if(request.getGameTranId() != null && !request.getGameTranId().isEmpty()){
+            params.put("gameTranId", request.getGameTranId());
+        }
+
+        if(request.getPlatformTranId() != null && !request.getPlatformTranId().isEmpty()){
+            params.put("platformTranId", request.getPlatformTranId());
+        }
+        return params;
+    }
+
+
+    private Map<String, Object> getSearchQueryParams(TransactionSearchRequestDto request) {
         Map<String,Object> params = new HashMap<>();
 
 
@@ -228,6 +343,66 @@ public class AccountTransactionRepository {
     }
 
 
+    private String buildJPQLOrderBy(TransactionSearchRequestDto request) {
+        if(request.getSortBy() == null) request.setSortBy("");
+
+        String sortColumn = "";
+
+        switch (request.getSortBy()) {
+            case "amount":
+                sortColumn =
+                        " (COALESCE(t.amountReal, 0) " +
+                                "+ COALESCE(t.amountReleasedBonus, 0) " +
+                                "+ COALESCE(t.amountPlayableBonus, 0) " +
+                                "+ COALESCE(t.amountUnderflow, 0) " +
+                                "+ COALESCE(t.amountFreeBet, 0)) ";
+                break;
+
+            case "balance":
+                sortColumn =
+                        " (COALESCE(t.balanceReal, 0) " +
+                                "+ COALESCE(t.balanceReleasedBonus, 0) " +
+                                "+ COALESCE(t.balancePlayableBonus, 0)) ";
+                break;
+
+            case "tranType":
+                sortColumn = "t.tranType";
+                break;
+
+            case "platformTranId":
+                sortColumn = "t.platformTranId";
+                break;
+
+            case "gameTranId":
+                sortColumn = "t.gameTranId";
+                break;
+
+            case "accountId":
+                sortColumn = "t.accountId";
+                break;
+
+            case "id":
+                sortColumn = "t.id";
+                break;
+
+            case "gameId":
+                sortColumn = "t.gameId";
+                break;
+
+            default:
+                sortColumn = "t.dateTime";
+                break;
+        }
+
+        String direction =
+                "DESC".equalsIgnoreCase(request.getSortDirection())
+                        ? "DESC"
+                        : "ASC";
+
+        return " ORDER BY " + sortColumn + " " + direction;
+    }
+
+
     private String buildOrderBy(TransactionSearchRequestDto request){
         if(request.getSortBy() == null) request.setSortBy("");
         String sortColumn;
@@ -272,28 +447,30 @@ public class AccountTransactionRepository {
 
     public long count(TransactionSearchRequestDto request){
 
-        StringBuilder sql = new StringBuilder()
-                .append("SELECT COUNT(*)\n")
-                .append("FROM account_tran\n")
-                .append("WHERE 1=1\n");
+        StringBuilder jpql = new StringBuilder()
+                .append("SELECT COUNT(t.id)\n")
+                .append("FROM AccountTransactionEntity t\n")
+                .append("WHERE 1 = 1\n");
 
 
-        sql.append(getSearchQuery(request));
+        jpql.append(getJPQLSearchQuery(request));
 
 
         Map<String, Object> params =
-                getSearchQueryParams(request);
+                getSearchJPQLParams(request);
 
 
-        Query query = entityManager
-                .createNativeQuery(sql.toString());
+        TypedQuery<Long> query =
+                entityManager.createQuery(
+                        jpql.toString(),
+                        Long.class
+                );
 
 
         params.forEach(query::setParameter);
 
 
-        return ((Number) query.getSingleResult())
-                .longValue();
+        return query.getSingleResult();
     }
 
 
