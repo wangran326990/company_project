@@ -4,6 +4,7 @@ import com.demo.dto.ReportSummaryDto;
 import com.demo.dto.TransactionReportDto;
 import com.demo.dto.TransactionSearchRequestDto;
 import com.demo.entity.AccountTransactionEntity;
+import com.demo.enums.TransactionColumnEnum;
 import com.demo.service.AccountTransactionService;
 import com.demo.service.ReportService;
 import com.demo.vo.ReportSummaryVo;
@@ -56,15 +57,15 @@ public class ReportRestController {
         CSVPrinter csvPrinter = new CSVPrinter(
                 response.getWriter(),
                 CSVFormat.DEFAULT.withHeader(
-                        "ID",
-                        "Account ID",
-                        "Datetime",
-                        "Tran Type",
-                        "Platform Tran ID",
-                        "Game Tran ID",
-                        "Game ID",
-                        "Amount",
-                        "Balance"));
+                        TransactionColumnEnum.ID.getLabel(),
+                        TransactionColumnEnum.ACCOUNT_ID.getLabel(),
+                        TransactionColumnEnum.DATE_TIME.getLabel(),
+                        TransactionColumnEnum.TRAN_TYPE.getLabel(),
+                        TransactionColumnEnum.PLATFORM_TRAN_ID.getLabel(),
+                        TransactionColumnEnum.GAME_TRAN_ID.getLabel(),
+                        TransactionColumnEnum.GAME_ID.getLabel(),
+                        TransactionColumnEnum.AMOUNT.getLabel(),
+                        TransactionColumnEnum.BALANCE.getLabel()));
 
         for (TransactionReportDto report : reports) {
             csvPrinter.printRecord(

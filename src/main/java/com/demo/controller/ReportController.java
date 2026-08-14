@@ -2,6 +2,8 @@ package com.demo.controller;
 
 
 import com.demo.dto.TransactionSearchRequestDto;
+import com.demo.enums.ReportSummaryEnum;
+import com.demo.enums.TransactionColumnEnum;
 import com.demo.service.ReportService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,6 +44,8 @@ public class ReportController {
             return "report";
         }
 
+        model.addAttribute("transactionColumns", TransactionColumnEnum.values());
+        model.addAttribute("reportSummaryColumns", ReportSummaryEnum.values());
         model.addAttribute(
                 "transactions",
                 reportService.search(form));

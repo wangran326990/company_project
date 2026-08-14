@@ -46,7 +46,7 @@ public class GlobalRestfulAPIExceptionHandler {
         log.error("error：",throwable);
         ApiError error = new ApiError(
                 BizCodeEnum.UNKNOW_EXCEPTION.getCode(),
-                BizCodeEnum.VALIDATION_EXCEPTION.getMsg(),
+                BizCodeEnum.UNKNOW_EXCEPTION.getMsg(),
                 new HashMap<>()
         );
         return ResponseEntity.internalServerError().body(error);

@@ -225,173 +225,16 @@
         <tr>
 
 
-            <th>
-                <a href="#" class="sort-link" data-column="id">
-                    ID
-                    <c:choose>
-                        <c:when test="${searchForm.sortBy == 'id' && searchForm.sortDirection == 'ASC'}">
-                            ↑
-                        </c:when>
-                        <c:when test="${searchForm.sortBy == 'id' && searchForm.sortDirection == 'DESC'}">
-                            ↓
-                        </c:when>
-                        <c:otherwise>
-                            ↕
-                        </c:otherwise>
-                    </c:choose>
-                </a>
-            </th>
-
-
-            <th>
-                <a href="#" class="sort-link" data-column="accountId">
-                    Account ID
-                    <c:choose>
-                        <c:when test="${searchForm.sortBy == 'accountId' && searchForm.sortDirection == 'ASC'}">
-                            ↑
-                        </c:when>
-                        <c:when test="${searchForm.sortBy == 'accountId' && searchForm.sortDirection == 'DESC'}">
-                            ↓
-                        </c:when>
-                        <c:otherwise>
-                            ↕
-                        </c:otherwise>
-                    </c:choose>
-                </a>
-
-
-            </th>
-
-
-            <th>
-                <a href="#" class="sort-link" data-column="dateTime">
-                    Datetime
-                    <c:choose>
-                        <c:when test="${searchForm.sortBy == 'dateTime' && searchForm.sortDirection == 'ASC'}">
-                            ↑
-                        </c:when>
-                        <c:when test="${searchForm.sortBy == 'dateTime' && searchForm.sortDirection == 'DESC'}">
-                            ↓
-                        </c:when>
-                        <c:otherwise>
-                            ↕
-                        </c:otherwise>
-                     </c:choose>
-                </a>
-
-
-            </th>
-
-
-            <th>
-                <a href="#" class="sort-link" data-column="tranType">
-                    Tran Type
-                    <c:choose>
-                        <c:when test="${searchForm.sortBy == 'tranType' && searchForm.sortDirection == 'ASC'}">
-                            ↑
-                        </c:when>
-                        <c:when test="${searchForm.sortBy == 'tranType' && searchForm.sortDirection == 'DESC'}">
-                            ↓
-                        </c:when>
-                        <c:otherwise>
-                            ↕
-                        </c:otherwise>
-                     </c:choose>
-                </a>
-
-            </th>
-
-
-            <th>
-                <a href="#" class="sort-link" data-column="platformTranId">
-                    Platform Tran ID
-                    <c:choose>
-                        <c:when test="${searchForm.sortBy == 'platformTranId' && searchForm.sortDirection == 'ASC'}">
-                            ↑
-                        </c:when>
-                        <c:when test="${searchForm.sortBy == 'platformTranId' && searchForm.sortDirection == 'DESC'}">
-                            ↓
-                        </c:when>
-                        <c:otherwise>
-                            ↕
-                        </c:otherwise>
-                     </c:choose>
-                </a>
-            </th>
-
-
-            <th>
-                <a href="#" class="sort-link" data-column="gameTranId">
-                    Game Tran ID
-                    <c:choose>
-                        <c:when test="${searchForm.sortBy == 'gameTranId' && searchForm.sortDirection == 'ASC'}">
-                            ↑
-                        </c:when>
-                        <c:when test="${searchForm.sortBy == 'gameTranId' && searchForm.sortDirection == 'DESC'}">
-                            ↓
-                        </c:when>
-                        <c:otherwise>
-                            ↕
-                        </c:otherwise>
-                     </c:choose>
-                </a>
-
-            </th>
-
-
-            <th>
-                <a href="#" class="sort-link" data-column="gameId">
-                    Game ID
-                     <c:choose>
-                        <c:when test="${searchForm.sortBy == 'gameId' && searchForm.sortDirection == 'ASC'}">
-                            ↑
-                        </c:when>
-                        <c:when test="${searchForm.sortBy == 'gameId' && searchForm.sortDirection == 'DESC'}">
-                            ↓
-                        </c:when>
-                        <c:otherwise>
-                            ↕
-                        </c:otherwise>
-                     </c:choose>
-                </a>
-            </th>
-
-
-            <th>
-                <a href="#" class="sort-link" data-column="amount">
-                    Amount
-                    <c:choose>
-                        <c:when test="${searchForm.sortBy == 'amount' && searchForm.sortDirection == 'ASC'}">
-                            ↑
-                        </c:when>
-                        <c:when test="${searchForm.sortBy == 'amount' && searchForm.sortDirection == 'DESC'}">
-                            ↓
-                        </c:when>
-                        <c:otherwise>
-                            ↕
-                        </c:otherwise>
-                     </c:choose>
-                </a>
-            </th>
-
-
-            <th>
-                <a href="#" class="sort-link" data-column="balance">
-                    Balance
-                     <c:choose>
-                        <c:when test="${searchForm.sortBy == 'balance' && searchForm.sortDirection == 'ASC'}">
-                            ↑
-                        </c:when>
-                        <c:when test="${searchForm.sortBy == 'balance' && searchForm.sortDirection == 'DESC'}">
-                            ↓
-                        </c:when>
-                        <c:otherwise>
-                            ↕
-                        </c:otherwise>
-                     </c:choose>
-                </a>
-            </th>
-
+           <c:forEach var="column" items="${transactionColumns}">
+               <th>
+                   <a href="#"
+                              class="sort-link"
+                              data-column="${column.value}">
+                               ${column.label}
+                               ${column.getSortIndicator(searchForm.sortBy, searchForm.sortDirection)}
+                           </a>
+               </th>
+           </c:forEach>
 
         </tr>
 
@@ -400,62 +243,15 @@
         <tr>
 
 
-            <td></td>
-
-
-            <td>
-
-                <form:input
-                        id="accountId"
-                        path="accountId"
-                        cssClass="filter-input"/>
-
-            </td>
-
-
-            <td></td>
-
-
-            <td>
-
-                <form:input
-                        path="tranType"
-                        cssClass="filter-input"/>
-
-            </td>
-
-
-            <td>
-
-                <form:input
-                        path="platformTranId"
-                        cssClass="filter-input"/>
-
-            </td>
-
-
-            <td>
-
-                <form:input
-                        path="gameTranId"
-                        cssClass="filter-input"/>
-
-            </td>
-
-
-            <td>
-
-                <form:input
-                        path="gameId"
-                        cssClass="filter-input"/>
-
-            </td>
-
-
-            <td></td>
-
-
-            <td></td>
+          <c:forEach var="column" items="${transactionColumns}">
+              <td>
+                  <c:if test="${column.filterable}">
+                      <form:input
+                              path="${column.value}"
+                              cssClass="filter-input"/>
+                  </c:if>
+              </td>
+          </c:forEach>
 
 
         </tr>
@@ -631,19 +427,18 @@
 <div id="summarySection">
     <h3>Summary Session</h3>
 
-    <table id="summaryTable">
-        <thead>
-            <tr>
-                <th>Account ID</th>
-                <th>Bet Sum</th>
-                <th>Win Sum</th>
-                <th>Net</th>
-            </tr>
-        </thead>
-        <tbody>
+  <table id="summaryTable">
+      <thead>
+          <tr>
+              <c:forEach var="column" items="${reportSummaryColumns}">
+                  <th>${column.displayName}</th>
+              </c:forEach>
+          </tr>
+      </thead>
+      <tbody>
 
-        </tbody>
-    </table>
+      </tbody>
+  </table>
 </div>
 
 </body>

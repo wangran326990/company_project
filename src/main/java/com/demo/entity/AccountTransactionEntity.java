@@ -14,24 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-
-@SqlResultSetMapping(
-        name = "TransactionReportDtoMapping",
-        classes = @ConstructorResult(
-                targetClass = TransactionReportDto.class,
-                columns = {
-                        @ColumnResult(name="id", type = Long.class),
-                        @ColumnResult(name="accountId", type = Integer.class),
-                        @ColumnResult(name="dateTime", type = LocalDateTime.class),
-                        @ColumnResult(name="tranType", type = String.class),
-                        @ColumnResult(name="platformTranId", type = String.class),
-                        @ColumnResult(name="gameTranId", type = String.class),
-                        @ColumnResult(name="gameId", type = String.class),
-                        @ColumnResult(name="amount", type = BigDecimal.class),
-                        @ColumnResult(name="balance", type = BigDecimal.class)
-                }
-        )
-)
 public class AccountTransactionEntity {
 
     @Id
@@ -117,6 +99,42 @@ public class AccountTransactionEntity {
     @Column(name = "EXTERNAL_GAME_SESSION_ID", length = 255)
     private String externalGameSessionId;
 
+
+    public AccountTransactionEntity(
+            Long id,
+            Integer accountId,
+            LocalDateTime dateTime,
+            String tranType,
+            String platformTranId,
+            String gameTranId,
+            String gameId,
+            BigDecimal amountReleasedBonus,
+            BigDecimal amountPlayableBonus,
+            BigDecimal balanceReleasedBonus,
+            BigDecimal balancePlayableBonus,
+            BigDecimal amountUnderflow,
+            BigDecimal amountFreeBet,
+            BigDecimal amountReal,
+            BigDecimal balanceReal) {
+
+        this.id = id;
+        this.accountId = accountId;
+        this.dateTime = dateTime;
+        this.tranType = tranType;
+        this.platformTranId = platformTranId;
+        this.gameTranId = gameTranId;
+        this.gameId = gameId;
+        this.amountReleasedBonus = amountReleasedBonus;
+        this.amountPlayableBonus = amountPlayableBonus;
+        this.balanceReleasedBonus = balanceReleasedBonus;
+        this.balancePlayableBonus = balancePlayableBonus;
+        this.amountUnderflow = amountUnderflow;
+        this.amountFreeBet = amountFreeBet;
+        this.amountReal = amountReal;
+        this.balanceReal = balanceReal;
+    }
+
+    @Transient
     public BigDecimal getAmountSum() {
         //TODO ask how do deal with amoun tRawLoyalty
         BigDecimal amountReal = (this.amountReal == null) ? new BigDecimal("0.00") : this.amountReal;
@@ -126,6 +144,7 @@ public class AccountTransactionEntity {
                 .add(amountReleasedBonus);
     }
 
+    @Transient
     public BigDecimal getBalanceSum() {
 
         BigDecimal balanceReal = (this.balanceReal == null) ? new BigDecimal("0.00") : this.balanceReal;
