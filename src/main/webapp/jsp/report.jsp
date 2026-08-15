@@ -400,7 +400,7 @@
 
         <c:if test="${transactions.hasPrevious()}">
 
-            <a href="#" href="#" class="page-link" data-column="${transactions.currentPage - 1}">
+            <a  href="#" class="page-link" data-column="${transactions.currentPage - 1}">
                 Previous
             </a>
 
@@ -411,7 +411,7 @@
 
         <c:if test="${transactions.hasNext()}">
 
-            <a href="#" href="#" class="page-link" data-column="${transactions.currentPage + 1}">
+            <a href="#" class="page-link" data-column="${transactions.currentPage + 1}">
                 Next
             </a>
 
