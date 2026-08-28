@@ -66,7 +66,7 @@ public class AccountTransactionRepository {
 
     }
 
-    public List<AccountTransactionEntity> findRangeByAccountId(LocalDateTime startDate, LocalDateTime endDate, Integer accountId) {
+    public List<AccountTransactionEntity> findRangeByAccountId(LocalDateTime startDate, LocalDateTime endDate, Integer accountId, Long lastId, Integer batchSize) {
         StringBuilder jpql = new StringBuilder(
                 "SELECT new AccountTransactionEntity(" +
                         "ate.id, " +
@@ -90,8 +90,13 @@ public class AccountTransactionRepository {
         );
 
         if (accountId != null) {
-            jpql.append(" AND ate.accountId = :accountId");
+            jpql.append(" AND ate.accountId = :accountId ");
         }
+
+        if (lastId != null) {
+            jpql.append(" AND ate.id > :id ");
+        }
+        jpql.append(" ORDER BY ate.id ASC");
         TypedQuery<AccountTransactionEntity> query = entityManager.createQuery(jpql.toString(), AccountTransactionEntity.class);
         if(startDate == null) {
             startDate = LocalDateTime.now();
@@ -104,6 +109,10 @@ public class AccountTransactionRepository {
         if(accountId != null) {
             query.setParameter("accountId", accountId);
         }
+        if(lastId != null) {
+            query.setParameter("id", lastId);
+        }
+        query.setMaxResults(batchSize);
         return query.getResultList();
     }
 

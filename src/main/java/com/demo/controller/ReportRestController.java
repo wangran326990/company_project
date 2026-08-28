@@ -1,27 +1,32 @@
 package com.demo.controller;
 
+import com.demo.dto.ExportResponse;
 import com.demo.dto.ReportSummaryDto;
 import com.demo.dto.TransactionReportDto;
 import com.demo.dto.TransactionSearchRequestDto;
 import com.demo.entity.AccountTransactionEntity;
 import com.demo.enums.TransactionColumnEnum;
 import com.demo.service.AccountTransactionService;
+import com.demo.service.CSVService;
 import com.demo.service.ReportService;
 import com.demo.vo.ReportSummaryVo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.springframework.core.io.support.ResourceRegion;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Path;
 import javax.validation.Valid;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/report")
@@ -29,6 +34,7 @@ import java.util.List;
 public class ReportRestController {
     private final AccountTransactionService accountTransactionService;
     private final ReportService reportService;
+    private final CSVService csvService;
 
 
     @GetMapping("/list")
@@ -42,46 +48,59 @@ public class ReportRestController {
         return ResponseEntity.ok(summary);
     }
 
-    @GetMapping(value = "/export", produces = "text/csv")
-    public void exportCsv(
-            @Valid TransactionSearchRequestDto request,
-            HttpServletResponse response) throws IOException {
+//    @GetMapping(value = "/export", produces = "text/csv")
+//    public void exportCsv(
+//            @Valid TransactionSearchRequestDto request,
+//            HttpServletResponse response) throws IOException {
+//
+//        List<TransactionReportDto> reports = reportService.getExcelData(request);
+//
+//        response.setContentType("text/csv");
+//        response.setCharacterEncoding("UTF-8");
+//        response.setHeader("Content-Disposition",
+//                "attachment; filename=\"report.csv\"");
+//
+//        CSVPrinter csvPrinter = new CSVPrinter(
+//                response.getWriter(),
+//                CSVFormat.DEFAULT.withHeader(
+//                        TransactionColumnEnum.ID.getLabel(),
+//                        TransactionColumnEnum.ACCOUNT_ID.getLabel(),
+//                        TransactionColumnEnum.DATE_TIME.getLabel(),
+//                        TransactionColumnEnum.TRAN_TYPE.getLabel(),
+//                        TransactionColumnEnum.PLATFORM_TRAN_ID.getLabel(),
+//                        TransactionColumnEnum.GAME_TRAN_ID.getLabel(),
+//                        TransactionColumnEnum.GAME_ID.getLabel(),
+//                        TransactionColumnEnum.AMOUNT.getLabel(),
+//                        TransactionColumnEnum.BALANCE.getLabel()));
+//
+//        for (TransactionReportDto report : reports) {
+//            csvPrinter.printRecord(
+//                    report.getId(),
+//                    report.getAccountId(),
+//                    report.getDateTime(),
+//                    report.getTranType(),
+//                    report.getPlatformTranId(),
+//                    report.getGameTranId(),
+//                    report.getGameId(),
+//                    report.getAmount(),
+//                    report.getBalance()
+//            );
+//        }
+//
+//        csvPrinter.flush();
+//    }
+    @PostMapping(value = "/export", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ExportResponse> export(@Valid @RequestBody TransactionSearchRequestDto requestDto) {
+        ExportResponse response =  csvService.createExport(requestDto, UUID.randomUUID().toString());
+        return ResponseEntity.ok(response);
+    }
 
-        List<TransactionReportDto> reports = reportService.getExcelData(request);
+    @GetMapping("/export/{exportId}/download")
+    public ResponseEntity<ResourceRegion> download(
+            @PathVariable String exportId,
+            @RequestHeader HttpHeaders headers) throws IOException {
 
-        response.setContentType("text/csv");
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"report.csv\"");
-
-        CSVPrinter csvPrinter = new CSVPrinter(
-                response.getWriter(),
-                CSVFormat.DEFAULT.withHeader(
-                        TransactionColumnEnum.ID.getLabel(),
-                        TransactionColumnEnum.ACCOUNT_ID.getLabel(),
-                        TransactionColumnEnum.DATE_TIME.getLabel(),
-                        TransactionColumnEnum.TRAN_TYPE.getLabel(),
-                        TransactionColumnEnum.PLATFORM_TRAN_ID.getLabel(),
-                        TransactionColumnEnum.GAME_TRAN_ID.getLabel(),
-                        TransactionColumnEnum.GAME_ID.getLabel(),
-                        TransactionColumnEnum.AMOUNT.getLabel(),
-                        TransactionColumnEnum.BALANCE.getLabel()));
-
-        for (TransactionReportDto report : reports) {
-            csvPrinter.printRecord(
-                    report.getId(),
-                    report.getAccountId(),
-                    report.getDateTime(),
-                    report.getTranType(),
-                    report.getPlatformTranId(),
-                    report.getGameTranId(),
-                    report.getGameId(),
-                    report.getAmount(),
-                    report.getBalance()
-            );
-        }
-
-        csvPrinter.flush();
+        return csvService.download("97a11456-c794-4fe3-a6eb-f58fde81ac3c", headers);
     }
 
 }

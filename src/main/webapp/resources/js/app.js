@@ -60,13 +60,26 @@ $(function () {
 
     $("#downloadBtn").click(function (e) {
         e.preventDefault();
-        const params = $.param({
-            accountId: $accountId.val(),
-            startDate: $startDatebox.prop("defaultValue"),
-            endDate: $endDatebox.prop("defaultValue")
-        });
 
-        window.location = "/api/v1/report/export?" + params;
+        $.ajax({
+            url: "/api/v1/report/export",
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({
+                accountId: $accountId.val(),
+                startDate: $startDatebox.prop("defaultValue"),
+                endDate: $endDatebox.prop("defaultValue")
+            }),
+            success: function (data) {
+                console.log(data);
+                window.location.href = data.downloadUrl;
+            },
+
+            error: function (xhr, status, error) {
+                console.error("Failed to load summary:", error);
+            }
+        });
     });
 
     function sort(column) {

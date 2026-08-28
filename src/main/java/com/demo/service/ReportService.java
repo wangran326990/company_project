@@ -75,10 +75,13 @@ public class ReportService {
                 .collect(Collectors.toList());
     }
 
-    public List<TransactionReportDto> getExcelData(TransactionSearchRequestDto searchRequest) {
+    public List<TransactionReportDto> getExcelData(TransactionSearchRequestDto searchRequest, Long lastId, Integer batchSize) {
         return accountTransactionRepository.findRangeByAccountId(
                 searchRequest.getStartDate(),
                 searchRequest.getEndDate(),
-                searchRequest.getAccountId()).stream().map(TransactionReportMapper::toDto).collect(Collectors.toList());
+                searchRequest.getAccountId(),
+                lastId,
+                batchSize
+                ).stream().map(TransactionReportMapper::toDto).collect(Collectors.toList());
     }
 }
